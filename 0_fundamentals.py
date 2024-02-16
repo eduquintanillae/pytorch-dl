@@ -57,3 +57,37 @@ print(float_16_tensor.dtype)
 some_tensor = torch.rand(3, 4)
 print(some_tensor)
 print(f"Shape: {some_tensor.shape}, Dtype: {some_tensor.dtype}, Device: {some_tensor.device}")
+
+# Basic Operations
+tensor = torch.tensor([1, 2, 3])
+print(tensor + 10)
+print(tensor * 10)
+print(tensor - 10)
+print(torch.multiply(tensor, 10))
+print(tensor + tensor)
+
+# Matrix Multiplication
+tensor = torch.tensor([1, 2, 3])
+print(tensor.shape)
+print(tensor*tensor)
+print(torch.matmul(tensor, tensor))
+print(tensor @ tensor) # not recommended
+
+tensor_A = torch.tensor([[1, 2],
+                         [3, 4],
+                         [5, 6]], dtype=torch.float32)
+
+tensor_B = torch.tensor([[7, 10],
+                         [8, 11], 
+                         [9, 12]], dtype=torch.float32)
+
+print(f"Original shapes: tensor_A = {tensor_A.shape}, tensor_B = {tensor_B.shape}\n")
+print(f"New shapes: tensor_A = {tensor_A.shape} (same as above), tensor_B.T = {tensor_B.T.shape}\n")
+print(f"Multiplying: {tensor_A.shape} * {tensor_B.T.shape} <- inner dimensions match\n")
+print("Output:\n")
+output = torch.matmul(tensor_A, tensor_B.T)
+print(output) 
+print(f"\nOutput shape: {output.shape}")
+print(torch.mm(tensor_A, tensor_B.T))
+
+# Matrix Multiplication Visualization: http://matrixmultiplication.xyz/
