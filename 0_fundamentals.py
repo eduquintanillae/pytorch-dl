@@ -91,3 +91,65 @@ print(f"\nOutput shape: {output.shape}")
 print(torch.mm(tensor_A, tensor_B.T))
 
 # Matrix Multiplication Visualization: http://matrixmultiplication.xyz/
+
+# Linear
+torch.manual_seed(42)
+linear = torch.nn.Linear(in_features=2, # in_features = matches inner dimension of input 
+                         out_features=6) # out_features = describes outer value 
+x = tensor_A
+output = linear(x)
+print(f"Input shape: {x.shape}\n")
+print(f"Output:\n{output}\n\nOutput shape: {output.shape}")
+
+# Min/Max, Sum, Mean
+x = torch.arange(0, 100, 10)
+print(f"Minimum: {x.min()}")
+print(f"Maximum: {x.max()}")
+# print(f"Mean: {x.mean()}") # this will error
+print(f"Mean: {x.type(torch.float32).mean()}") # won't work without float datatype
+print(f"Sum: {x.sum()}")
+print(torch.max(x), torch.min(x), torch.mean(x.type(torch.float32)), torch.sum(x))
+
+# Argmax and Argmin
+tensor = torch.arange(10, 100, 10)
+print(f"Tensor: {tensor}")
+print(f"Index where max value occurs: {tensor.argmax()}")
+print(f"Index where min value occurs: {tensor.argmin()}")
+
+# Change tensor datatype
+tensor = torch.arange(10., 100., 10.)
+print(tensor.dtype)
+
+tensor_float16 = tensor.type(torch.float16)
+print(tensor_float16)
+
+tensor_int8 = tensor.type(torch.int8)
+print(tensor_int8)
+
+# Reshaping, stacking, squeezing, unsqueezing
+x = torch.arange(1., 8.)
+x_reshaped = x.reshape(1, 7)
+print(x_reshaped, x_reshaped.shape)
+z = x.view(1, 7)
+print(z, z.shape)
+z[:, 0] = 5
+print(z, x)
+x_stacked = torch.stack([x, x, x, x], dim=0)
+print(x_stacked, x_stacked.shape)
+
+print(f"Previous tensor: {x_reshaped}")
+print(f"Previous shape: {x_reshaped.shape}")
+x_squeezed = x_reshaped.squeeze()
+print(f"\nNew tensor: {x_squeezed}")
+print(f"New shape: {x_squeezed.shape}")
+
+print(f"Previous tensor: {x_squeezed}")
+print(f"Previous shape: {x_squeezed.shape}")
+x_unsqueezed = x_squeezed.unsqueeze(dim=0)
+print(f"\nNew tensor: {x_unsqueezed}")
+print(f"New shape: {x_unsqueezed.shape}")
+
+x_original = torch.rand(size=(224, 224, 3))
+x_permuted = x_original.permute(2, 0, 1) # shifts axis 0->1, 1->2, 2->0
+print(f"Previous shape: {x_original.shape}")
+print(f"New shape: {x_permuted.shape}")
