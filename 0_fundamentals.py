@@ -153,3 +153,56 @@ x_original = torch.rand(size=(224, 224, 3))
 x_permuted = x_original.permute(2, 0, 1) # shifts axis 0->1, 1->2, 2->0
 print(f"Previous shape: {x_original.shape}")
 print(f"New shape: {x_permuted.shape}")
+
+# Indexing
+x = torch.arange(1, 10).reshape(1, 3, 3)
+print(f"First square bracket:\n{x[0]}") 
+print(f"Second square bracket: {x[0][0]}") 
+print(f"Third square bracket: {x[0][0][0]}")
+print(x[:, 0])
+print(x[:, :, 1])
+print(x[: , 1, 1])
+print(x[0, 0, :])
+
+# Pytorch and Numpy
+import numpy as np
+array = np.arange(1.0, 8.0)
+tensor = torch.from_numpy(array)
+print(array, tensor)
+
+array = array + 1
+print(array)
+tensor = torch.ones(7) # create a tensor of ones with dtype=float32
+numpy_tensor = tensor.numpy() # will be dtype=float32 unless changed
+print(tensor, numpy_tensor)
+tensor = tensor + 1
+print(tensor, numpy_tensor)
+
+# Reproducibility
+import random
+RANDOM_SEED=42
+torch.manual_seed(seed=RANDOM_SEED) 
+random_tensor_C = torch.rand(3, 4)
+
+# Have to reset the seed every time a new rand() is called 
+# Without this, tensor_D would be different to tensor_C 
+torch.random.manual_seed(seed=RANDOM_SEED)
+random_tensor_D = torch.rand(3, 4)
+
+print(f"Tensor C:\n{random_tensor_C}\n")
+print(f"Tensor D:\n{random_tensor_D}\n")
+print(f"Does Tensor C equal Tensor D? (anywhere)")
+random_tensor_C == random_tensor_D
+
+# Run on GPU if available
+print(torch.cuda.is_available())
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+print(torch.cuda.device_count())
+
+tensor = torch.tensor([1, 2, 3])
+tensor_on_gpu = tensor.to(device)
+print(tensor_on_gpu)
+tensor_on_gpu.numpy() # back to cpu
+tensor_back_on_cpu = tensor_on_gpu.cpu().numpy()
+print(tensor_back_on_cpu)
