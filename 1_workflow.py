@@ -15,3 +15,31 @@ y = weight * X + bias
 train_split = int(0.8 * len(X))
 X_train, y_train = X[:train_split], y[:train_split]
 X_test, y_test = X[train_split:], y[train_split:]
+
+# -- BUILD MODEL --
+# Notes: 
+# - nn.Module: almost everything in PyTorch is a nn.Module (think of this as neural network lego blocks)
+# - torch.randn(): start with random weights and bias (adjusted as the model learns)
+# - PyTorch loves float32 by default
+# - forward: defines the computation in the model
+class LinearRegressionModel(nn.Module):
+    def __init__(self):
+        super().__init__() 
+        self.weights = nn.Parameter(
+            torch.randn(1, dtype=torch.float), requires_grad=True
+        )
+
+        self.bias = nn.Parameter(
+            torch.randn(1, dtype=torch.float), requires_grad=True
+        )
+    
+    def forward(self, x: torch.Tensor) -> torch.Tensor: 
+        return self.weights * x + self.bias # linear regression formula (y = m*x + b)
+    
+torch.manual_seed(42)
+model_0 = LinearRegressionModel()
+print(list(model_0.parameters()))
+print(model_0.state_dict())
+
+with torch.inference_mode(): 
+    y_preds = model_0(X_test)
