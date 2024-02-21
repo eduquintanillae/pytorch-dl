@@ -1,11 +1,10 @@
 import torch
-from torch import nn # nn contains all of PyTorch's building blocks for neural networks
+from torch import nn # building blocks for nn´s
 import matplotlib.pyplot as plt
 
+# -- DATA --
 weight = 0.7
 bias = 0.3
-
-# -- DATA --
 start = 0
 end = 1
 step = 0.02
