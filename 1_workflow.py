@@ -84,3 +84,11 @@ for epoch in range(epochs):
             train_loss_values.append(loss.detach().numpy())
             test_loss_values.append(test_loss.detach().numpy())
             print(f"Epoch: {epoch} | MAE Train Loss: {loss} | MAE Test Loss: {test_loss} ")
+            
+# -- PREDICT --
+model_0.eval()
+
+with torch.inference_mode():
+  # model_0.to(device)
+  # X_test = X_test.to(device)
+  y_preds = model_0(X_test)
