@@ -92,3 +92,19 @@ with torch.inference_mode():
   # model_0.to(device)
   # X_test = X_test.to(device)
   y_preds = model_0(X_test)
+  
+# -- SAVE MODEL --
+from pathlib import Path
+
+MODEL_PATH = Path("models")
+MODEL_PATH.mkdir(parents=True, exist_ok=True)
+MODEL_NAME = "01_pytorch_workflow_model_0.pth"
+MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+print(f"Saving model to: {MODEL_SAVE_PATH}")
+torch.save(obj=model_0.state_dict(), # only saving the state_dict() only saves the models learned parameters
+           f=MODEL_SAVE_PATH) 
+
+# -- LOAD MODEL --
+loaded_model_0 = LinearRegressionModel()
+loaded_model_0.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
