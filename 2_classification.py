@@ -52,3 +52,47 @@ def accuracy_fn(y_true, y_pred):
     correct = torch.eq(y_true, y_pred).sum().item()
     acc = (correct / len(y_pred)) * 100 
     return acc
+
+# -- TRAINING --
+y_logits = model_0(X_test.to(device))[:5]
+
+# If y_pred_probs >= 0.5, y=1 (class 1)
+# If y_pred_probs < 0.5, y=0 (class 0)
+# round the prediction probabilities
+y_pred_probs = torch.sigmoid(y_logits)
+y_preds = torch.round(y_pred_probs)
+y_pred_labels = torch.round(torch.sigmoid(model_0(X_test.to(device))[:5]))
+print(torch.eq(y_preds.squeeze(), y_pred_labels.squeeze()))
+
+torch.manual_seed(42)
+epochs = 100
+
+X_train, y_train = X_train.to(device), y_train.to(device)
+X_test, y_test = X_test.to(device), y_test.to(device)
+
+for epoch in range(epochs):
+    model_0.train()
+    y_logits = model_0(X_train).squeeze() 
+    y_pred = torch.round(torch.sigmoid(y_logits)) # turn logits -> pred probs -> pred labls
+    loss = loss_fn(y_logits, y_train) 
+    acc = accuracy_fn(y_true=y_train, 
+                      y_pred=y_pred) 
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    model_0.eval()
+    with torch.inference_mode():
+        test_logits = model_0(X_test).squeeze() 
+        test_pred = torch.round(torch.sigmoid(test_logits))
+        test_loss = loss_fn(test_logits,
+                            y_test)
+        test_acc = accuracy_fn(y_true=y_test,
+                               y_pred=test_pred)
+
+    if epoch % 10 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%")
+        
+# Improving the model from a model perspective
+# Section 5: https://github.com/mrdbourke/pytorch-deep-learning/blob/main/02_pytorch_classification.ipynb
