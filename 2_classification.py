@@ -96,3 +96,25 @@ for epoch in range(epochs):
         
 # Improving the model from a model perspective
 # Section 5: https://github.com/mrdbourke/pytorch-deep-learning/blob/main/02_pytorch_classification.ipynb
+
+# -- BUILD MODEL WITH NON-LINEARITY --
+class CircleModelV2(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer_1 = nn.Linear(in_features=2, out_features=10)
+        self.layer_2 = nn.Linear(in_features=10, out_features=10)
+        self.layer_3 = nn.Linear(in_features=10, out_features=1)
+        self.relu = nn.ReLU() 
+
+    def forward(self, x):
+       return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
+
+model_3 = CircleModelV2().to(device)
+loss_fn = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.SGD(model_3.parameters(), lr=0.1)
+
+# ... train loop would go here, similar to above ...
+
+model_3.eval()
+with torch.inference_mode():
+    y_preds = torch.round(torch.sigmoid(model_3(X_test))).squeeze()
