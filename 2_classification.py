@@ -118,3 +118,60 @@ optimizer = torch.optim.SGD(model_3.parameters(), lr=0.1)
 model_3.eval()
 with torch.inference_mode():
     y_preds = torch.round(torch.sigmoid(model_3(X_test))).squeeze()
+    
+
+## -- Multi-class classification --
+from sklearn.datasets import make_blobs
+
+NUM_CLASSES = 4
+NUM_FEATURES = 2
+RANDOM_SEED = 42
+
+X_blob, y_blob = make_blobs(n_samples=1000,
+    n_features=NUM_FEATURES,
+    centers=NUM_CLASSES,
+    cluster_std=1.5,
+    random_state=RANDOM_SEED
+)
+
+X_blob = torch.from_numpy(X_blob).type(torch.float)
+y_blob = torch.from_numpy(y_blob).type(torch.LongTensor)
+print(X_blob[:5], y_blob[:5])
+
+X_blob_train, X_blob_test, y_blob_train, y_blob_test = train_test_split(X_blob,
+    y_blob,
+    test_size=0.2,
+    random_state=RANDOM_SEED
+)
+
+class BlobModel(nn.Module):
+    def __init__(self, input_features, output_features, hidden_units=8):
+        super().__init__()
+        self.linear_layer_stack = nn.Sequential(
+            nn.Linear(in_features=input_features, out_features=hidden_units),
+            # nn.ReLU(), # require non-linear layers? 
+            nn.Linear(in_features=hidden_units, out_features=hidden_units),
+            # nn.ReLU(),
+            nn.Linear(in_features=hidden_units, out_features=output_features), # num of classes
+        )
+    
+    def forward(self, x):
+        return self.linear_layer_stack(x)
+
+model_4 = BlobModel(input_features=NUM_FEATURES, 
+                    output_features=NUM_CLASSES, 
+                    hidden_units=8).to(device)
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(model_4.parameters(), lr=0.1)
+
+# ... training loop would go here, similar to above ...
+
+model_4.eval()
+with torch.inference_mode():
+    y_logits = model_4(X_blob_test)
+    
+y_pred_probs = torch.softmax(y_logits, dim=1)
+y_preds = y_pred_probs.argmax(dim=1)
+print(f"Predictions: {y_preds[:10]}\nLabels: {y_blob_test[:10]}")
+print(f"Test accuracy: {accuracy_fn(y_true=y_blob_test, y_pred=y_preds)}%")
